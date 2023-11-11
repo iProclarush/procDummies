@@ -65,19 +65,48 @@ local function AntiAFK()
     end
 end
 
-local function PerformAction(itemId) 
+local function PerformAction(itemId, sticks) 
     local i = 0
     local inv = API.ReadInvArrays33()
     if #inv > 0 then
         for _, a in pairs(inv) do
             if(a.itemid1 == itemId) then
-                API.DoAction_Interface(0x24,0x8d63,2,1473,5,i,5392);
-                API.RandomSleep2(200, 400, 800)
+                if(sticks == false) then
+                    API.DoAction_Interface(0x24,0x8d63,2,1473,5,i,5392);
+                    API.RandomSleep2(200, 400, 800)
+                else
+                    if (API.InvItemcount_1(47715) > 0) then
+                        if (not API.Buffbar_GetIDstatus(47715,false).found) then
+                            API.DoAction_Interface(0x41,0xba63,2,1473,5,i,5392)
+                        end
+                    
+                        buffOverloadValue = API.Buffbar_GetIDstatus(47715, false).text
+                        buffOverloadValue = buffOverloadValue:sub(1, -2)
+                    
+                        if(buffOverloadValue:match("1$")) then
+                            print(API.Buffbar_GetIDstatus(47715, false).text)
+                            API.DoAction_Interface(0x41,0xba63,2,1473,5,i,5392)
+                        end
+                    
+                        if(API.Buffbar_GetIDstatus(47715, false).conv_text < 11 and string.find(API.Buffbar_GetIDstatus(47715, false).text,"(4)")) then
+                            API.DoAction_Interface(0x41,0xba63,1,1473,5,i,5392)
+                            API.RandomSleep2(500, 1500, 1500)
+                            API.DoAction_Interface(0x41,0xba63,1,1473,5,i,5392)
+                            API.RandomSleep2(500, 1500, 1500)
+                            API.DoAction_Interface(0x41,0xba63,1,1473,5,i,5392)
+                            API.RandomSleep2(500, 1500, 1500)
+                            API.DoAction_Interface(0x41,0xba63,1,1473,5,i,5392)
+                            API.RandomSleep2(500, 1500, 1500)
+                            API.DoAction_Interface(0x41,0xba63,1,1473,5,i,5392)
+                        end
+                    end
+                end
             end
             i = i + 1
         end
     end
 end
+
 
 local function ActionDummy()
     local locationToChosenValue = {
@@ -90,7 +119,7 @@ local function ActionDummy()
 
     if chosenValue then
         print("Deploying " .. chosenValue)
-        PerformAction(locationToChosenValue[dummiesList.string_value])
+        PerformAction(locationToChosenValue[dummiesList.string_value], false)
         API.RandomSleep2(200, 250, 350)
     end
 end
@@ -106,6 +135,31 @@ local function AnimCheck(loops)
     return false
 end
 
+local function IncenseSticks()
+    print("Checking incense...")
+    if (API.InvItemcount_1(47715) > 0) then
+        if (not API.Buffbar_GetIDstatus(47715,false).found) then
+            print("Buff not found")
+            PerformAction(47715, true)
+        end
+    
+        buffOverloadValue = API.Buffbar_GetIDstatus(47715, false).text
+        buffOverloadValue = buffOverloadValue:sub(1, -2)
+    
+        if(buffOverloadValue:match("1$")) then
+            print("Buff not overloaded")
+            PerformAction(47715, true)
+        end
+
+        print(API.Buffbar_GetIDstatus(47715, false).conv_text)
+        print(string.find(API.Buffbar_GetIDstatus(47715, false).text,"(4)"))
+
+        if(API.Buffbar_GetIDstatus(47715, false).conv_text < 11 and string.find(API.Buffbar_GetIDstatus(47715, false).text,"(4)")) then
+            PerformAction(47715, true)
+            print("Buff not maxed")
+        end
+    end
+end
 
 local function procDummies()
 
@@ -114,6 +168,7 @@ local function procDummies()
 
     if(not AnimCheck(150)) then
         if(not AnimCheck(15)) then
+            IncenseSticks()
             ActionDummy()
             API.RandomSleep2(200, 250, 350)
         end
@@ -131,10 +186,9 @@ do------------------------------------------------------------------------------
     end
 
     if(API.GetGameState() == 3) then
-        
 
-        AntiAFK()
         API.DoRandomEvents()
+        AntiAFK()
 
         if(dummiesList.string_value == "Select Action" or dummiesList.string_value == nil or dummiesList.string_value == "" or dummiesList.string_value == " ") then
             print("Waiting for user to finish setup")
@@ -151,9 +205,6 @@ do------------------------------------------------------------------------------
             procDummies()
         end
     end
-
-
-
 
     API.RandomSleep2(500, 750, 1500)
 end----------------------------------------------------------------------------------

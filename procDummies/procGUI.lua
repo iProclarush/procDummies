@@ -60,11 +60,9 @@ function procDummiesGUI.Draw()
     API.DrawComboBox(dummiesList, false)
 
     if(setup) then
-        print("Setup, drawing XP: " .. tostring((API.GetSkillXP(string.upper(dummiesList.string_value)) -skillStartingXP)))
         xpGained.string_value = "Gained " .. procDummiesGUI.CommaFormatting((API.GetSkillXP(string.upper(dummiesList.string_value)) -skillStartingXP)) .. " XP"
         API.DrawTextAt(xpGained)
 
-        print("Setup, drawing TTL: " .. tostring((procDummiesGUI.CalculateTimeFrame() or "00:00:00")))
         timeTillLevel.string_value = "TTL " .. (procDummiesGUI.CalculateTimeFrame() or "00:00:00")
         API.DrawTextAt(timeTillLevel)
     end
