@@ -78,6 +78,7 @@ local function PerformAction(itemId, sticks)
                     if (API.InvItemcount_1(47715) > 0) then
                         if (not API.Buffbar_GetIDstatus(47715,false).found) then
                             API.DoAction_Interface(0x41,0xba63,2,1473,5,i,5392)
+                            API.RandomSleep2(200, 400, 800)
                         end
                     
                         buffOverloadValue = API.Buffbar_GetIDstatus(47715, false).text
@@ -86,6 +87,7 @@ local function PerformAction(itemId, sticks)
                         if(buffOverloadValue:match("1$")) then
                             print(API.Buffbar_GetIDstatus(47715, false).text)
                             API.DoAction_Interface(0x41,0xba63,2,1473,5,i,5392)
+                            API.RandomSleep2(200, 400, 800)
                         end
                     
                         if(API.Buffbar_GetIDstatus(47715, false).conv_text < 11 and string.find(API.Buffbar_GetIDstatus(47715, false).text,"(4)")) then
